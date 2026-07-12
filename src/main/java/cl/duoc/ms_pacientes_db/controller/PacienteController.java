@@ -1,5 +1,6 @@
 package cl.duoc.ms_pacientes_db.controller;
 
+import jakarta.validation.Valid;
 import cl.duoc.ms_pacientes_db.model.dto.PacienteDto;
 import cl.duoc.ms_pacientes_db.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class PacienteController {
 
     // C - Create
     @PostMapping
-    public ResponseEntity<PacienteDto> registrarPaciente(@RequestBody PacienteDto pacienteDto) {
+    public ResponseEntity<PacienteDto> registrarPaciente(@Valid @RequestBody PacienteDto pacienteDto) {
         PacienteDto nuevoPaciente = pacienteService.registrarPaciente(pacienteDto);
         return new ResponseEntity<>(nuevoPaciente, HttpStatus.CREATED);
     }
@@ -40,23 +41,15 @@ public class PacienteController {
 
     // U - Update (Editar paciente existente)
     @PutMapping("/{id}")
-    public ResponseEntity<PacienteDto> editarPaciente(@PathVariable Long id, @RequestBody PacienteDto datosNuevos) {
-        try {
-            PacienteDto pacienteActualizado = pacienteService.editarPaciente(id, datosNuevos);
-            return new ResponseEntity<>(pacienteActualizado, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<PacienteDto> editarPaciente(@PathVariable Long id, @Valid @RequestBody PacienteDto datosNuevos) {
+        PacienteDto pacienteActualizado = pacienteService.editarPaciente(id, datosNuevos);
+        return new ResponseEntity<>(pacienteActualizado, HttpStatus.OK);
     }
 
     // D - Delete (Eliminar paciente)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPaciente(@PathVariable Long id) {
-        try {
-            pacienteService.eliminarPaciente(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        pacienteService.eliminarPaciente(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

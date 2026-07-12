@@ -1,5 +1,6 @@
 package cl.duoc.ms_pacientes_db.service;
 
+import cl.duoc.ms_pacientes_db.exception.PacienteNotFoundException;
 import cl.duoc.ms_pacientes_db.model.dto.PacienteDto;
 import cl.duoc.ms_pacientes_db.model.entity.Paciente;
 import cl.duoc.ms_pacientes_db.repository.PacienteRepository;
@@ -79,7 +80,7 @@ public class PacienteService {
             paciente.setDireccion(datosNuevos.getDireccion());
             paciente.setTelefonoContacto(datosNuevos.getTelefonoContacto());
             return convertirADto(repository.save(paciente));
-        }).orElseThrow(() -> new RuntimeException("Paciente no encontrado con el id: " + id));
+        }).orElseThrow(() -> new PacienteNotFoundException(id));
     }
 
     // D - Delete
@@ -87,7 +88,8 @@ public class PacienteService {
         if (repository.existsById(id)) {
             repository.deleteById(id);
         } else {
-            throw new RuntimeException("Paciente no encontrado con el id: " + id);
+            throw new PacienteNotFoundException(id);
+
         }
     }
 }
