@@ -11,10 +11,8 @@ CREATE TABLE IF NOT EXISTS paciente (
     direccion TEXT,
     telefono_contacto VARCHAR(20),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    KEY idx_run (run),
+    KEY idx_numero_registro (numero_registro),
+    KEY idx_numero_ficha_clinica (numero_ficha_clinica)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- Crear índices para mejora de consultas
-CREATE INDEX idx_run ON paciente(run);
-CREATE INDEX idx_numero_registro ON paciente(numero_registro);
-CREATE INDEX idx_numero_ficha_clinica ON paciente(numero_ficha_clinica);
