@@ -4,6 +4,8 @@ import cl.duoc.ms_pacientes_db.exception.PacienteNotFoundException;
 import cl.duoc.ms_pacientes_db.model.dto.PacienteDto;
 import cl.duoc.ms_pacientes_db.model.entity.Paciente;
 import cl.duoc.ms_pacientes_db.repository.PacienteRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class PacienteService {
+
+    private static final Logger log = LoggerFactory.getLogger(PacienteService.class);
 
     @Autowired
     private PacienteRepository repository;
@@ -52,6 +56,7 @@ public class PacienteService {
     // C - Create
     public PacienteDto registrarPaciente(PacienteDto dto) {
         Paciente guardado = repository.save(convertirAEntity(dto));
+        log.info("Paciente registrado con id={}, run={}", guardado.getId(), guardado.getRun());
         return convertirADto(guardado);
     }
 
@@ -79,17 +84,23 @@ public class PacienteService {
             paciente.setFechaNacimiento(datosNuevos.getFechaNacimiento());
             paciente.setDireccion(datosNuevos.getDireccion());
             paciente.setTelefonoContacto(datosNuevos.getTelefonoContacto());
-            return convertirADto(repository.save(paciente));
-        }).orElseThrow(() -> new PacienteNotFoundException(id));
+            PacienteDto actualizado = convertirADto(repository.save(paciente));
+            log.info("Paciente id={} editado correctamente", id);
+            return actualizado;
+        }).orElseThrow(() -> {
+            log.warn("Intento de editar un paciente inexistente, id={}", id);
+            return new PacienteNotFoundException(id);
+        });
     }
 
     // D - Delete
     public void eliminarPaciente(Long id) {
         if (repository.existsById(id)) {
             repository.deleteById(id);
+            log.info("Paciente id={} eliminado correctamente", id);
         } else {
+            log.warn("Intento de eliminar un paciente inexistente, id={}", id);
             throw new PacienteNotFoundException(id);
-
         }
     }
 }
